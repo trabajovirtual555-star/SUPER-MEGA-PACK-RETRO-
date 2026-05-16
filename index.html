@@ -334,29 +334,41 @@ src="https://www.facebook.com/tr?id=2864370953945032&ev=PageView&noscript=1"
             document.getElementById('timer-m').innerText = String(minutes).padStart(2, '0');
             document.getElementById('timer-s').innerText = String(seconds).padStart(2, '0');
         }, 1000);
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Lógica del FAQ (Acordeón)
+    const faqButtons = document.querySelectorAll('.border-slate-800 button');
+    
+    faqButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const container = button.parentElement;
+            const content = container.querySelector('div[style*="max-height"], .faq-content');
+            const icon = button.querySelector('i');
 
-        // Lógica de Preguntas Frecuentes (Acordeón)
-        function toggleFaq(index) {
-            const content = document.getElementById(`content-faq-${index}`);
-            const icon = document.getElementById(`icon-faq-${index}`);
-            
-            if (content.classList.contains('max-h-0')) {
-                // Abrir
-                content.classList.remove('max-h-0', 'opacity-0');
-                content.classList.add('max-h-96', 'opacity-100');
-                icon.setAttribute('data-lucide', 'chevron-up');
+            // Si está abierto, lo cerramos
+            if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+                content.style.maxHeight = "0px";
+                content.style.opacity = "0";
+                if (icon) icon.style.transform = 'rotate(0deg)';
             } else {
-                // Cerrar
-                content.classList.add('max-h-0', 'opacity-0');
-                content.classList.remove('max-h-96', 'opacity-100');
-                icon.setAttribute('data-lucide', 'chevron-down');
+                // Cerramos otros abiertos para que sea prolijo
+                document.querySelectorAll('.faq-content').forEach(el => {
+                    el.style.maxHeight = "0px";
+                    el.style.opacity = "0";
+                });
+                
+                // Abrimos el actual
+                content.style.maxHeight = content.scrollHeight + "px";
+                content.style.opacity = "1";
+                if (icon) icon.style.transform = 'rotate(180deg)';
             }
-            lucide.createIcons();
-        }
+        });
+    });
 
-        // Lógica de la barra inferior al hacer scroll
+    // 2. Lógica de la barra inferior (Sticky CTA)
+    const sticky = document.getElementById('sticky-cta');
+    if (sticky) {
         window.addEventListener('scroll', () => {
-            const sticky = document.getElementById('sticky-cta');
             if (window.scrollY > 500) {
                 sticky.classList.remove('translate-y-full');
                 sticky.classList.add('translate-y-0');
@@ -365,7 +377,12 @@ src="https://www.facebook.com/tr?id=2864370953945032&ev=PageView&noscript=1"
                 sticky.classList.add('translate-y-full');
             }
         });
-  </script>  
-</body>    
-</html>
+    }
 
+    // 3. Inicializar Iconos
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+       
