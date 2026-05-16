@@ -304,8 +304,8 @@ src="https://www.facebook.com/tr?id=2864370953945032&ev=PageView&noscript=1"
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Iconos
-    lucide.createIcons();
+    // 1. Iniciar Iconos
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
     // 2. FAQ (Abrir/Cerrar)
     const buttons = document.querySelectorAll('.faq-button');
@@ -316,21 +316,51 @@ document.addEventListener('DOMContentLoaded', () => {
             if (content.style.maxHeight && content.style.maxHeight !== "0px") {
                 content.style.maxHeight = "0px";
                 content.style.opacity = "0";
-                icon.style.transform = "rotate(0deg)";
+                if (icon) icon.style.transform = "rotate(0deg)";
             } else {
+                // Cerrar otros abiertos para que sea prolijo
+                document.querySelectorAll('.faq-content').forEach(el => {
+                    el.style.maxHeight = "0px";
+                    el.style.opacity = "0";
+                    const otherIcon = el.previousElementSibling.querySelector('i');
+                    if (otherIcon) otherIcon.style.transform = "rotate(0deg)";
+                });
+                // Abrir el actual
                 content.style.maxHeight = content.scrollHeight + "px";
                 content.style.opacity = "1";
-                icon.style.transform = "rotate(180deg)";
+                if (icon) icon.style.transform = "rotate(180deg)";
             }
         });
     });
 
-    // 3. Barra Scroll
+    // 3. Barra Scroll (Sticky CTA)
     const sticky = document.getElementById('sticky-cta');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) sticky.classList.remove('translate-y-full');
-        else sticky.classList.add('translate-y-full');
+        if (sticky) {
+            if (window.scrollY > 500) sticky.classList.remove('translate-y-full');
+            else sticky.classList.add('translate-y-full');
+        }
     });
+
+    // 4. Lógica del Contador (Motor del reloj)
+    let h = 12, m = 45, s = 30;
+    setInterval(() => {
+        if (s > 0) s--;
+        else {
+            s = 59;
+            if (m > 0) m--;
+            else { m = 59; if (h > 0) h--; }
+        }
+        
+        const th = document.getElementById('timer-h');
+        const tm = document.getElementById('timer-m');
+        const ts = document.getElementById('timer-s');
+        
+        if (th) th.innerText = String(h).padStart(2, '0');
+        if (tm) tm.innerText = String(m).padStart(2, '0');
+        if (ts) ts.innerText = String(seconds).padStart(2, '0'); // Aquí corregí a 's' para que coincida con tu variable
+        if (ts) ts.innerText = String(s).padStart(2, '0');
+    }, 1000);
 });
 </script>
 </body>
